@@ -95,6 +95,15 @@ bash InstallNET.sh $OS_FLAG \
   -swap "$MYSWAP" \
   $BBR_FLAG
 
+# 修复 GRUB timeout，防止卡在菜单
+GRUB_CFG="/boot/grub/grub.cfg"
+if [ -f "$GRUB_CFG" ]; then
+  if ! grep -q "^set timeout=" "$GRUB_CFG"; then
+    sed -i '/^set default=/a set timeout=5' "$GRUB_CFG"
+    echo -e "${G}已添加 GRUB timeout=5${N}"
+  fi
+fi
+
 echo
 echo -e "${Y}重装完成，10秒后自动重启...${N}"
 for i in $(seq 10 -1 1); do
