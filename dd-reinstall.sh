@@ -95,4 +95,11 @@ bash InstallNET.sh $OS_FLAG \
   -swap "$MYSWAP" \
   $BBR_FLAG
 
+echo
+echo -e "${Y}重装完成，10秒后自动重启...${N}"
+for i in $(seq 10 -1 1); do
+  echo -ne "\r${R}${i}${N} 秒后重启... (Ctrl+C 取消)"
+  sleep 1
+done
+echo
 reboot
