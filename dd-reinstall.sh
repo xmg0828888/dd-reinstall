@@ -2,8 +2,6 @@
 # DD 重装系统 - Debian 13
 # 用法: curl -sL mjjtop.com/dd -o dd.sh && bash dd.sh
 
-set -e
-
 # 颜色
 R='\033[0;31m' G='\033[0;32m' Y='\033[0;33m' B='\033[0;34m' N='\033[0m'
 
