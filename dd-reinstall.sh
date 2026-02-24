@@ -82,7 +82,7 @@ read -p "$(echo -e ${R}确认重装? 数据将全部丢失!${N} [y/N]: )" CONFIR
 
 # 下载并执行
 echo -e "${G}下载 InstallNET.sh ...${N}"
-wget --no-check-certificate -qO InstallNET.sh \
+curl -fsSL -o InstallNET.sh \
   'https://raw.githubusercontent.com/leitbogioro/Tools/master/Linux_reinstall/InstallNET.sh'
 chmod a+x InstallNET.sh
 
