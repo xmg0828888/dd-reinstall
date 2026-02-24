@@ -1,7 +1,7 @@
 #!/bin/bash
 # DD 重装系统脚本 - Debian 13
 # 用法: bash dd-reinstall.sh
-# 一键: bash <(curl -sL https://cdn.jsdelivr.net/gh/xmg0828888/dd-reinstall@main/dd-reinstall.sh)
+# 一键: bash <(curl -sL mjjtop.com/dd)
 
 set -e
 
@@ -20,24 +20,24 @@ DEF_HOST="debian"
 DEF_TZ="Asia/Hong_Kong"
 DEF_SWAP="1024"
 
-# 交互输入
-read -p "$(echo -e ${G}主机名${N} [${DEF_HOST}]: )" MYHOST
+# 交互输入 (< /dev/tty 确保管道模式下也能读取用户输入)
+read -p "$(echo -e ${G}主机名${N} [${DEF_HOST}]: )" MYHOST < /dev/tty
 MYHOST=${MYHOST:-$DEF_HOST}
 
-read -p "$(echo -e ${G}SSH端口${N} [${DEF_PORT}]: )" MYPORT
+read -p "$(echo -e ${G}SSH端口${N} [${DEF_PORT}]: )" MYPORT < /dev/tty
 MYPORT=${MYPORT:-$DEF_PORT}
 
-read -sp "$(echo -e ${G}root密码${N} [默认: ${DEF_PWD}]: )" MYPWD
+read -sp "$(echo -e ${G}root密码${N} [默认: ${DEF_PWD}]: )" MYPWD < /dev/tty
 echo
 MYPWD=${MYPWD:-$DEF_PWD}
 
-read -p "$(echo -e ${G}时区${N} [${DEF_TZ}]: )" MYTZ
+read -p "$(echo -e ${G}时区${N} [${DEF_TZ}]: )" MYTZ < /dev/tty
 MYTZ=${MYTZ:-$DEF_TZ}
 
-read -p "$(echo -e ${G}Swap大小MB${N} [${DEF_SWAP}]: )" MYSWAP
+read -p "$(echo -e ${G}Swap大小MB${N} [${DEF_SWAP}]: )" MYSWAP < /dev/tty
 MYSWAP=${MYSWAP:-$DEF_SWAP}
 
-read -p "$(echo -e ${G}启用BBR${N} [Y/n]: )" BBR
+read -p "$(echo -e ${G}启用BBR${N} [Y/n]: )" BBR < /dev/tty
 BBR=${BBR:-Y}
 
 # 系统选择
@@ -49,7 +49,7 @@ echo "  3) Ubuntu 24.04"
 echo "  4) Ubuntu 22.04"
 echo "  5) CentOS 9"
 echo "  6) Alpine 3.19"
-read -p "$(echo -e ${G}选择${N} [1]: )" OS_CHOICE
+read -p "$(echo -e ${G}选择${N} [1]: )" OS_CHOICE < /dev/tty
 OS_CHOICE=${OS_CHOICE:-1}
 
 case $OS_CHOICE in
@@ -77,13 +77,20 @@ echo -e "  Swap:   ${B}${MYSWAP}MB${N}"
 echo -e "  BBR:    ${B}${BBR_FLAG:-关闭}${N}"
 echo -e "${Y}══════════════════════════${N}"
 echo
-read -p "$(echo -e ${R}确认重装? 数据将全部丢失!${N} [y/N]: )" CONFIRM
+read -p "$(echo -e ${R}确认重装? 数据将全部丢失!${N} [y/N]: )" CONFIRM < /dev/tty
 [[ "${CONFIRM,,}" != "y" ]] && echo "已取消" && exit 0
 
 # 下载并执行
 echo -e "${G}下载 InstallNET.sh ...${N}"
-curl -fsSL -o InstallNET.sh \
-  'https://raw.githubusercontent.com/leitbogioro/Tools/master/Linux_reinstall/InstallNET.sh'
+if command -v wget &>/dev/null; then
+  wget --no-check-certificate -qO InstallNET.sh \
+    'https://raw.githubusercontent.com/leitbogioro/Tools/master/Linux_reinstall/InstallNET.sh'
+elif command -v curl &>/dev/null; then
+  curl -fsSL -o InstallNET.sh \
+    'https://raw.githubusercontent.com/leitbogioro/Tools/master/Linux_reinstall/InstallNET.sh'
+else
+  echo -e "${R}错误: 需要 wget 或 curl${N}" && exit 1
+fi
 chmod a+x InstallNET.sh
 
 echo -e "${G}开始重装...${N}"
